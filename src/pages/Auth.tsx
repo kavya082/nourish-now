@@ -25,19 +25,17 @@ const Auth = () => {
     setLoading(true);
 
     if (mode === "signup") {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { role: roleChoice },
+        },
+      });
       if (error) {
         toast({ title: error.message, variant: "destructive" });
         setLoading(false);
         return;
-      }
-
-      // Update role if donor was chosen
-      if (roleChoice === "donor" && data.user) {
-        await supabase
-          .from("user_roles")
-          .update({ role: "donor" as const })
-          .eq("user_id", data.user.id);
       }
 
       toast({ title: "Account created! Welcome to ResQfood 🌱" });
